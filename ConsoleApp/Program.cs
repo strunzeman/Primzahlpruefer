@@ -13,16 +13,15 @@ namespace ConsoleApp
         {
             Console.Title = "Primzahlprüfer bis 199.999";
             Menu.KonsolenMenu();
-        Start:
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("\nWelche Zahl soll geprüft werden?");
 
             Program Primzahl = new Program();
             //Program EingabeVergleich = new Program();
 
             Console.ResetColor();
             Console.ForegroundColor = ConsoleColor.Yellow;
-            
+         Start:
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("Welche Zahl soll geprüft werden?");
             bool valid_entry = false;
             int EingabeZahl = 0;
 
@@ -33,41 +32,34 @@ namespace ConsoleApp
                     Console.Write("Eingabe: ");
                     EingabeZahl = Convert.ToInt32(Console.ReadLine());
                     valid_entry = true;
+                    if (Primzahl.EingabeValid(EingabeZahl) == false)
+                    {
+                        FehlerAusgabe();
+                        valid_entry = false;
+                    }
                 } catch
                 {
-                    valid_entry = false;
                     FehlerAusgabe();
+                    valid_entry = false;
                 }
+
             }
-            
             
             int p_fixed = EingabeZahl; //Fixe Instanz der Eingabe
 
-            if (Primzahl.EingabeValid(p_fixed) == false)
-            {
-                FehlerAusgabe();
-                goto Start;
-            }
-
-            while (EingabeZahl > 0) //Dynamische Instanz der Eingabe
+            while (EingabeZahl > 1) //Dynamische Instanz der Eingabe
             {
                 Primzahl.Zerlegung(EingabeZahl);
                 EingabeZahl--;
             }
 
-            //Primzahl.KleinstePrimfaktorenSammeln(p_fixed);
-
             if (Primzahl.PrimPrüfungSchnell(p_fixed) == false)
             {
                 Primzahl.IstKeinePrimzahlAusgabe(p_fixed);
-                //Primzahl.FaktorenListeAusgabe(p_fixed);
-                //Primzahl.KleinstePrimfaktorenAusgabe(p_fixed);
             }
             else
             {
                 Primzahl.IstPrimzahlAusgabe(p_fixed);
-                //Primzahl.FaktorenListeAusgabe(p_fixed);
-
             }
             goto Start;  //lazy repeat style
         }
@@ -75,7 +67,7 @@ namespace ConsoleApp
         private static void FehlerAusgabe()
         {
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("ERROR! Es kann nur eine Zahl größer als 1, kleiner als 199.999, oder ein Befehl eingegeben werden.\nProgram wird neu gestartet.");
+            Console.WriteLine("ERROR! \nEs kann nur eine Zahl größer als 1 oder kleiner als 199.999 eingegeben werden. Program wird neu gestartet.");
             Console.Beep();
             Console.ForegroundColor = ConsoleColor.Yellow;
         }
@@ -93,7 +85,9 @@ namespace ConsoleApp
             int Teiler = EingabeZahl / 2;
             while (Teiler > 0) //for (int i = q; i > 0; i--)
             {
-                if (EingabeZahl % Teiler != 0) //wenn q (= p/2) kein ganzer Teiler von p ist, probier die nächst kleinere Zahl.
+                //
+                //
+                if (EingabeZahl % Teiler != 0) //Primzahlen können von dieser Funktion ausgeschlossen werden.
                 {
                     Teiler--;
                 }
@@ -103,7 +97,7 @@ namespace ConsoleApp
                 }
                 else
                 {
-                    Primfaktoren.Add(EingabeZahl); //wenn p nicht durch q geteilt werden kann, muss sie prim sein.
+                    Primfaktoren.Add(EingabeZahl); //Die Liste mit Primzahlen füllen und dann einfach vergleichen.
                     break;
                 }
             }
@@ -128,40 +122,10 @@ namespace ConsoleApp
             }
         }
 
-        /*void KleinstePrimfaktorenSammeln(int EingabeZahl)
-        {
-            foreach (int Faktor in Primfaktoren)
-            {
-                if (EingabeZahl % Faktor == 0 && EingabeZahl != Faktor) //
-                {
-                    KleinstePrimfaktoren.Add(Faktor);
-                    //break; //Kommentar entfernen Wenn die Schleife schon beim ersten Treffer abgebrochen werden soll.
-                }
-            }
-        }*/
-        void KleinstePrimfaktorenAusgabe(int EingabeZahl)
-        {
-            int teiler = 1;
-
-            do      // Führe die Schleife aus, solange der Quotient der geteilten Zahl != 1 und der Rest != 0 ist
-            {
-                teiler++;   // Der 1. Teiler = 2
-
-                while (EingabeZahl % teiler == 0)  // Der Teiler bleibt gleich, solange kein Rest entsteht
-                {
-                    EingabeZahl = EingabeZahl / teiler;
-                    Console.Write((teiler) + "*");
-                }
-
-            } while ((EingabeZahl / teiler != 1) && (EingabeZahl % teiler != 0));   // Ist der Quotient = 1 und der Rest = 0 beende die Schleife
-
-            Console.WriteLine(EingabeZahl);
-        }
-
         void IstPrimzahlAusgabe(int EingabeZahl)
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("Die Zahl {0} kann nicht in Primfaktoren zerlegt werden, sie ist prim.", EingabeZahl);
+            Console.WriteLine("Die Zahl {0} kann nicht in Primfaktoren zerlegt werden, sie ist prim.", EingabeZahl);
         }
 
         bool PrimPrüfungSchnell(int EingabeZahl)
@@ -179,7 +143,7 @@ namespace ConsoleApp
         void IstKeinePrimzahlAusgabe(int EingabeZahl)
         {
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.Write("Die Zahl {0} ist nicht prim. Ihre kleinsten Primfaktoren sind ", EingabeZahl);
+            Console.Write("Die Zahl {0} ist nicht prim. Ihre Primfaktoren sind ", EingabeZahl);
             int Teiler = 1;
 
             while(Teiler <= EingabeZahl)
@@ -196,7 +160,7 @@ namespace ConsoleApp
                 }
                 if (((EingabeZahl / Teiler) == 1) && (EingabeZahl >= 2))
                 {
-                    Console.Write("{0}.", EingabeZahl);
+                    Console.WriteLine("{0}.", EingabeZahl);
                     break;
                 }
             }
