@@ -1,4 +1,6 @@
-﻿using System;
+//First attempt at modifying code
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
